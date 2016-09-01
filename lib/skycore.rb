@@ -29,11 +29,14 @@ class Skycore
   end
 
   def send_request(body)
-    dbg "-->"
+    dbg "-------------------->"
     dbg body
+
     res = HTTParty.post(API_URL, {body: body})
-    dbg '<--'
+
+    dbg "<--------------------"
     dbg res
+
     res
   end
 
@@ -41,10 +44,29 @@ class Skycore
     parsed = Crack::XML.parse(xml_string)
     response = parsed["RESPONSE"]
 
+    # Success usually looks like
+    #
+    # <RESPONSE>
+    #   <STATUS>Success</STATUS>
+    #   <TO>15551234888</TO>
+    #   <MMSID>35674</MMSID>
+    # </RESPONSE>
+    #
+    # Whereas error is usually
+    #
+    # <RESPONSE>
+    #   <STATUS>Failure</STATUS>
+    #   <ERRORCODE>E111</ERRORCODE>
+    #   <TO>15551234888</TO>
+    #   <ERRORINFO>Invalid shortcode</ERRORINFO>
+    # </RESPONSE>
+    #
+    # Raise error with errorcode and errorinfo if things dont go smoothly
     if response["STATUS"] == "Failure" or response["ERRORCODE"]
       raise "Skycore error: #{response["ERRORCODE"]} - #{response["ERRORINFO"]}"
     end
 
+    # Otherwise return serialized response (ruby hash)
     response
   end
 
