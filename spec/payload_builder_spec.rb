@@ -45,7 +45,7 @@ describe Skycore::PayloadBuilder do
     let (:from) { "41044" }
     let (:to) { "12062746599" }
     let (:parsed) { 
-      payload = builder.build_send_saved_mms(from, to, 123, 4, 1337)
+      payload = builder.build_send_saved_mms(from, to, 123, "fallback", 4, 1337)
       Crack::XML.parse(payload)
     }
 
@@ -55,6 +55,10 @@ describe Skycore::PayloadBuilder do
 
     it "builds correct TO field" do
       expect(parsed["REQUEST"]["TO"]).to eq(to)
+    end
+
+    it "builds correct FALLBACKSMSTEXT field" do
+      expect(parsed["REQUEST"]["FALLBACKSMSTEXT"]).to eq("fallback")
     end
 
     it "builds correct FROM field" do
