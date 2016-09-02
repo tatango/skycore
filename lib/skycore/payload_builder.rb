@@ -45,8 +45,6 @@ class Skycore
           end
         }
       }
-
-      x.to_s
     end
 
     # http://apidocs.skycore.com/HTTP_API/MESSAGING/sendSavedMMS.html
@@ -73,8 +71,6 @@ class Skycore
         x.FROM from
         x.CAMPAIGNREF campaignref if campaignref
       }
-
-      x.to_xml
     end
   end
 end
