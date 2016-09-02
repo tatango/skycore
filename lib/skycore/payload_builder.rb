@@ -1,3 +1,5 @@
+require 'builder'
+
 class Skycore
   class PayloadBuilder
     attr_reader :api_key
@@ -25,9 +27,10 @@ class Skycore
     #   </SLIDE>
     # </REQUEST>
     def build_save_mms(text, fallback_text, attachments)
-      x = Nokogiri::XML::Builder.new
       api_key = @api_key
 
+      x = Builder::XmlMarkup.new
+      x.instruct!
       x.REQUEST {
         x.ACTION "saveMMS"
         x.API_KEY api_key
@@ -36,14 +39,14 @@ class Skycore
         x.SLIDE {
           x.TEXT text
           attachments.each do |attachment|
-            x.send(attachment[:type]) {
-              x.URL(attachment[:url])
-            }
+            x.tag!(attachment[:type]) do
+              x.URL attachment[:url]
+            end
           end
         }
       }
 
-      x.to_xml
+      x.to_s
     end
 
     # http://apidocs.skycore.com/HTTP_API/MESSAGING/sendSavedMMS.html
@@ -58,11 +61,11 @@ class Skycore
     #   <OPERATORID>4</OPERATORID>
     # </REQUEST>
     def build_send_saved_mms(from, to, mms_id, fallbacksmstext, operator_id=nil, campaignref=nil)
-      x = Nokogiri::XML::Builder.new
-      api_key = @api_key
+      x = Builder::XmlMarkup.new
+      x.instruct!
       x.REQUEST {
         x.ACTION "sendSavedMMS"
-        x.API_KEY api_key
+        x.API_KEY @api_key
         x.MMSID mms_id
         x.TO to
         x.FALLBACKSMSTEXT fallbacksmstext

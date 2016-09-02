@@ -2,7 +2,6 @@ require "skycore/version"
 require "skycore/payload_builder"
 
 require "crack"
-require "nokogiri"
 require "httparty"
 
 class Skycore
