@@ -21,6 +21,10 @@ class Skycore
     do_request builder.build_send_saved_mms(@shortcode, to, mms_id, fallbacksmstext, operator_id, campaignref)
   end
 
+  def login_user
+    do_request builder.build_login_user
+  end
+
   protected
 
   def do_request(payload)

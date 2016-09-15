@@ -72,5 +72,14 @@ class Skycore
         x.CAMPAIGNREF campaignref if campaignref
       }
     end
+
+    def build_login_user
+      x = Builder::XmlMarkup.new
+      x.instruct!
+      x.REQUEST {
+        x.ACTION "loginUser"
+        x.API_KEY @api_key
+      }
+    end
   end
 end
