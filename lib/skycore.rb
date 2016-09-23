@@ -13,8 +13,8 @@ class Skycore
     @debug = debug
   end
 
-  def save_mms(text, fallback_text, attachments=[])
-    do_request builder.build_save_mms(text, fallback_text, attachments)
+  def save_mms(subject, text, fallback_text, attachments=[])
+    do_request builder.build_save_mms(subject, text, fallback_text, attachments)
   end
 
   def send_saved_mms(to, mms_id, fallbacksmstext, operator_id=nil, campaignref=nil)
