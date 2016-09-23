@@ -26,7 +26,7 @@ class Skycore
     #     <!-- / for each attachment -->
     #   </SLIDE>
     # </REQUEST>
-    def build_save_mms(text, fallback_text, attachments)
+    def build_save_mms(subject, text, fallback_text, attachments)
       api_key = @api_key
 
       x = Builder::XmlMarkup.new
@@ -36,6 +36,7 @@ class Skycore
         x.API_KEY api_key
         x.NAME "tatango_test"
         x.FALLBACKSMSTEXT fallback_text
+        x.SUBJECT subject if subject
         x.SLIDE {
           x.TEXT text
           attachments.each do |attachment|
