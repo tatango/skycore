@@ -55,11 +55,10 @@ class Skycore
     #   <API_KEY>qTFkykO9JTfahCOqJ0V2Wf5Cg1t8iWlZ</API_KEY>
     #   <TO>16501234123</TO>
     #   <FROM>60856</FROM>
-    #   <CAMPAIGNREF>1337</CAMPAIGNREF>
     #   <MMSID>35674</MMSID>
     #   <OPERATORID>4</OPERATORID>
     # </REQUEST>
-    def build_send_saved_mms(from, to, mms_id, fallbacksmstext, operator_id=nil, campaignref=nil)
+    def build_send_saved_mms(from, to, mms_id, fallbacksmstext, operator_id, subject=nil, content=nil)
       x = Builder::XmlMarkup.new
       x.instruct!
       x.REQUEST {
@@ -68,9 +67,15 @@ class Skycore
         x.MMSID mms_id
         x.TO to
         x.FALLBACKSMSTEXT fallbacksmstext
-        x.OPERATORID operator_id if operator_id
+        x.OPERATORID(operator_id) if operator_id
         x.FROM from
-        x.CAMPAIGNREF campaignref if campaignref
+        x.CUSTOMSUBJECT(subject) if subject
+        if content
+          x.CUSTOMTEXT {
+            x.VALUE content
+            x.SLIDE 1
+          }
+        end
       }
     end
 
