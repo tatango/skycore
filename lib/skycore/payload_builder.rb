@@ -48,6 +48,35 @@ class Skycore
       }
     end
 
+    def build_save_mms_v2(subject, text, fallback_text, slides)
+      api_key = @api_key
+
+      x = Builder::XmlMarkup.new
+      x.instruct!
+      x.REQUEST {
+        x.ACTION "saveMMS"
+        x.API_KEY api_key
+        x.NAME "tatango_test"
+        x.FALLBACKSMSTEXT fallback_text
+        x.SUBJECT subject if subject
+        # slide with necessary message
+        x.SLIDE {
+          x.TEXT text
+        }
+        slides.each do |slide|
+          x.SLIDE {
+            if slide['type'] == 'text'
+              x.TEXT slide['content']
+            else
+              x.tag!(slide['kind'].upcase) do
+                x.URL slide['url']
+              end
+            end
+          }
+        end
+      }
+    end
+
     # http://apidocs.skycore.com/HTTP_API/MESSAGING/sendSavedMMS.html
     #
     # <REQUEST>
@@ -75,6 +104,35 @@ class Skycore
             x.VALUE content
             x.SLIDE 1
           }
+        end
+      }
+    end
+
+    def build_send_saved_mms_v2(from, to, mms_id, fallbacksmstext, operator_id, subject=nil, content=nil, slides=[])
+      x = Builder::XmlMarkup.new
+      x.instruct!
+      x.REQUEST {
+        x.ACTION "sendSavedMMS"
+        x.API_KEY @api_key
+        x.MMSID mms_id
+        x.TO to
+        x.FALLBACKSMSTEXT fallbacksmstext
+        x.OPERATORID(operator_id) if operator_id
+        x.FROM from
+        x.CUSTOMSUBJECT(subject) if subject
+        if content
+          x.CUSTOMTEXT {
+            x.VALUE content
+            x.SLIDE 1
+          }
+        end
+        slides.each_with_index do |slide, ix|
+          if slide['type'] == 'text'
+            x.CUSTOMTEXT {
+              x.VALUE slide['content']
+              x.SLIDE ix + 2
+            }
+          end
         end
       }
     end
