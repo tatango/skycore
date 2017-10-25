@@ -25,8 +25,8 @@ class Skycore
     do_request builder.build_send_saved_mms(@shortcode, to, mms_id, fallbacksmstext, operator_id, subject, content)
   end
 
-  def send_saved_mms_v2(to, mms_id, fallbacksmstext, operator_id, subject=nil, content=nil, slides=[])
-    do_request builder.build_send_saved_mms_v2(@shortcode, to, mms_id, fallbacksmstext, operator_id, subject, content, slides)
+  def send_saved_mms_v2(to, mms_id, fallbacksmstext, operator_id, subject=nil, slides=[])
+    do_request builder.build_send_saved_mms_v2(@shortcode, to, mms_id, fallbacksmstext, operator_id, subject, slides)
   end
 
   def login_user

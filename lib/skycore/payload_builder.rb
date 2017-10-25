@@ -104,7 +104,7 @@ class Skycore
       }
     end
 
-    def build_send_saved_mms_v2(from, to, mms_id, fallbacksmstext, operator_id, subject=nil, content=nil, slides=[])
+    def build_send_saved_mms_v2(from, to, mms_id, fallbacksmstext, operator_id, subject=nil, slides=[])
       x = Builder::XmlMarkup.new
       x.instruct!
       x.REQUEST {
@@ -116,17 +116,11 @@ class Skycore
         x.OPERATORID(operator_id) if operator_id
         x.FROM from
         x.CUSTOMSUBJECT(subject) if subject
-        if content
-          x.CUSTOMTEXT {
-            x.VALUE content
-            x.SLIDE 1
-          }
-        end
         slides.each_with_index do |slide, ix|
           if slide['type'] == 'text'
             x.CUSTOMTEXT {
               x.VALUE slide['content']
-              x.SLIDE ix + 2
+              x.SLIDE ix + 1
             }
           end
         end
