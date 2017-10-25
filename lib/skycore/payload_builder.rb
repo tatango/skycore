@@ -48,7 +48,7 @@ class Skycore
       }
     end
 
-    def build_save_mms_v2(subject, text, fallback_text, slides)
+    def build_save_mms_v2(subject, fallback_text, slides)
       api_key = @api_key
 
       x = Builder::XmlMarkup.new
@@ -59,15 +59,11 @@ class Skycore
         x.NAME "tatango_test"
         x.FALLBACKSMSTEXT fallback_text
         x.SUBJECT subject if subject
-        # slide with necessary message
-        x.SLIDE {
-          x.TEXT text
-        }
         slides.each do |slide|
           x.SLIDE {
             if slide['type'] == 'text'
               x.TEXT slide['content']
-            else
+            elsif slide['type'] == 'attachment' && !slide['url'].to_s.empty?
               x.tag!(slide['kind'].upcase) do
                 x.URL slide['url']
               end
