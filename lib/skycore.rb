@@ -7,10 +7,11 @@ require "httparty"
 class Skycore
   API_URL = "https://secure.skycore.com/API/wxml/1.3/index.php"
 
-  def initialize(api_key, shortcode, debug=false)
+  def initialize(api_key, shortcode, debug=false, api_url=nil)
     @api_key = api_key
     @shortcode = shortcode
     @debug = debug
+    @api_url = api_url || API_URL
   end
 
   def save_mms(subject, text, fallback_text, attachments=[])
@@ -43,7 +44,7 @@ class Skycore
     dbg "-------------------->"
     dbg body
 
-    res = HTTParty.post(API_URL, {body: body})
+    res = HTTParty.post(@api_url, {body: body})
 
     dbg "<--------------------"
     dbg res
