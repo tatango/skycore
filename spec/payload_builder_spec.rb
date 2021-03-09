@@ -6,28 +6,40 @@ describe Skycore::PayloadBuilder do
 
   context '#build_save_mms' do
     it "has correct api_key" do
-      payload = builder.build_save_mms("Hello", "Hello", [])
+      payload = builder.build_save_mms("", "Hello", "Hello", [])
       parsed = Crack::XML.parse(payload)
       expect(parsed["REQUEST"]["API_KEY"]).to eq(api_key)
     end
 
     it "includes fallback text" do
-      payload = builder.build_save_mms("Hello", "Fallback SMS", [])
+      payload = builder.build_save_mms("", "Hello", "Fallback SMS", [])
       parsed = Crack::XML.parse(payload)
       expect(parsed["REQUEST"]["FALLBACKSMSTEXT"]).to eq("Fallback SMS")
     end
 
     it "builds simple text" do
-      payload = builder.build_save_mms("Hello", "Hello", [])
+      payload = builder.build_save_mms("", "Hello", "Hello", [])
       parsed = Crack::XML.parse(payload)
       slide = parsed["REQUEST"]["SLIDE"]
+      subject = parsed["REQUEST"]["SUBJECT"]
       expect(slide.keys.size).to eq(1)
+      expect(subject).to eq(nil)
+      expect(slide["TEXT"]).to eq("Hello")
+    end
+
+    it "builds subject and text" do
+      payload = builder.build_save_mms("Hi", "Hello", "Hello", [])
+      parsed = Crack::XML.parse(payload)
+      slide = parsed["REQUEST"]["SLIDE"]
+      subject = parsed["REQUEST"]["SUBJECT"]
+      expect(slide.keys.size).to eq(1)
+      expect(subject).to eq("Hi")
       expect(slide["TEXT"]).to eq("Hello")
     end
 
     it "builds text + image" do
       image_url = "http://app.tatango.com/tatango_logo.png"
-      payload = builder.build_save_mms("Hello", "Hello", [
+      payload = builder.build_save_mms("", "Hello", "Hello", [
         {
           type: "IMAGE",
           url: image_url
@@ -67,10 +79,6 @@ describe Skycore::PayloadBuilder do
 
     it "builds correct OPERATORID field" do
       expect(parsed["REQUEST"]["OPERATORID"]).to eq("4")
-    end
-
-    it "builds correct CAMPAIGNREF field" do
-      expect(parsed["REQUEST"]["CAMPAIGNREF"]).to eq("1337")
     end
   end
 end
