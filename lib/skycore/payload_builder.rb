@@ -61,11 +61,11 @@ class Skycore
         x.SUBJECT subject if subject
         slides.each do |slide|
           x.SLIDE {
-            if slide['type'] == 'text'
-              x.TEXT slide['content']
-            elsif slide['type'] == 'attachment' && !slide['url'].to_s.empty?
-              x.tag!(slide['kind'].upcase) do
-                x.URL slide['url']
+            if slide[:type] == 'text'
+              x.TEXT slide[:content]
+            elsif slide[:type] == 'attachment' && !slide[:url].to_s.empty?
+              x.tag!(slide[:kind].upcase) do
+                x.URL slide[:url]
               end
             end
           }
