@@ -27,12 +27,14 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "httparty", "~> 0.13"
+  spec.add_dependency "httparty", "~> 0.18"
   spec.add_dependency "crack", "~> 0.4" # Pretty dope
   spec.add_dependency "builder" # RIP, Jim
 
-  spec.add_development_dependency "bundler", "~> 1.12"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "byebug"
+  spec.add_development_dependency "bundler", "~> 1.17"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rspec", "~> 3.10"
+  spec.add_development_dependency "byebug", "~> 11.1"
+  spec.add_development_dependency "executable-hooks", "~> 1.6"
+  spec.add_development_dependency "gem-wrappers", "~> 1.4"
 end
