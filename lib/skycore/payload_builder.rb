@@ -48,6 +48,23 @@ class Skycore
       }
     end
 
+    # Builds following:
+    #
+    # <REQUEST>
+    #   <ACTION>saveMMS</ACTION>
+    #   <API_KEY>my_key</API_KEY> <!-- api_key -->
+    #   <NAME>tatango_test</NAME>
+    #   <FALLBACKSMSTEXT>Hello</FALLBACKSMSTEXT> <!-- fallback_text -->
+    #   <!-- / for each slide -->
+    #   <SLIDE>
+    #     <TEXT>Hello</TEXT> <!-- text -->
+    #   </SLIDE>
+    #   <SLIDE>
+    #     <IMAGE>
+    #     </IMAGE>
+    #       <URL>http://app.tatango.com/tatango_logo.png</URL>
+    #   </SLIDE>
+    # </REQUEST>
     def build_save_mms_v2(subject, fallback_text, slides)
       api_key = @api_key
 
