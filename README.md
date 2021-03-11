@@ -36,3 +36,5 @@ Take a look at `lib/skycore.rb` to find out what gem api looks like
 
 ## Development
 
+- Ruby must be at least version `2.6.5`
+- Run the tests with `rspec`
