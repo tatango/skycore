@@ -135,10 +135,17 @@ class Skycore
         x.CUSTOMSUBJECT(subject) if subject
         slides.each_with_index do |slide, ix|
           if slide['type'] == 'text'
+          if slide[:type] == 'text'
             x.CUSTOMTEXT {
               x.VALUE slide['content']
+              x.VALUE slide[:content]
               x.SLIDE ix + 1
             }
+          elsif slide[:type] == 'attachment'
+            x.tag!(slide[:kind].upcase) do
+              x.URL slide[:url]
+              x.SLIDE ix + 1
+            end
           end
         end
       }
