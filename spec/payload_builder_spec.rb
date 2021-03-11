@@ -148,9 +148,41 @@ describe Skycore::PayloadBuilder do
     it "builds correct OPERATORID field" do
       expect(parsed["REQUEST"]["OPERATORID"]).to eq("4")
     end
+  end
 
-    it "builds correct CAMPAIGNREF field" do
-      expect(parsed["REQUEST"]["CAMPAIGNREF"]).to eq("1337")
+  context "#build_send_saved_mms_v2" do
+    image_url = "http://app.tatango.com/tatango_logo.png"
+    let (:from) { "51044" }
+    let (:to) { "12062746598" }
+    let (:parsed) { 
+      payload = builder.build_send_saved_mms_v2(from, to, 123, "Fallback SMS", 4, 1337, [
+        {
+          type: "text",
+          content: "Hello"
+        },
+        {
+          type: "attachment",
+          kind: "IMAGE",
+          url: image_url
+        }
+      ])
+      Crack::XML.parse(payload)
+    }
+
+    it "builds correct api key" do
+      expect(parsed["REQUEST"]["API_KEY"]).to eq(api_key)
+    end
+
+    it "builds the correct FALLBACKSMSTEXT field" do
+      expect(parsed["REQUEST"]["FALLBACKSMSTEXT"]).to eq("Fallback SMS")
+    end
+
+    it "contains text content" do
+      expect(parsed["REQUEST"]["CUSTOMTEXT"]["VALUE"]).to eq("Hello")
+    end
+
+    it "contains image content" do
+      expect(parsed["REQUEST"]["IMAGE"]["URL"]).to eq(image_url)
     end
   end
 end
