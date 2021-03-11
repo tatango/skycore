@@ -6,13 +6,13 @@ describe Skycore::PayloadBuilder do
 
   context '#build_save_mms' do
     it "has correct api_key" do
-      payload = builder.build_save_mms("Hello", "Fallback SMS", [])
+      payload = builder.build_save_mms("", "Hello", "Fallback SMS", [])
       parsed = Crack::XML.parse(payload)
       expect(parsed["REQUEST"]["API_KEY"]).to eq(api_key)
     end
 
     it "includes fallback text" do
-      payload = builder.build_save_mms("Hello", "Fallback SMS", [])
+      payload = builder.build_save_mms("", "Hello", "Fallback SMS", [])
       parsed = Crack::XML.parse(payload)
       expect(parsed["REQUEST"]["FALLBACKSMSTEXT"]).to eq("Fallback SMS")
     end

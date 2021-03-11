@@ -134,10 +134,8 @@ class Skycore
         x.FROM from
         x.CUSTOMSUBJECT(subject) if subject
         slides.each_with_index do |slide, ix|
-          if slide['type'] == 'text'
           if slide[:type] == 'text'
             x.CUSTOMTEXT {
-              x.VALUE slide['content']
               x.VALUE slide[:content]
               x.SLIDE ix + 1
             }
