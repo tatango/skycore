@@ -6,7 +6,7 @@ describe Skycore::PayloadBuilder do
 
   context '#build_save_mms' do
     it "has correct api_key" do
-      payload = builder.build_save_mms("Hello", "Hello", [])
+      payload = builder.build_save_mms("Hello", "Fallback SMS", [])
       parsed = Crack::XML.parse(payload)
       expect(parsed["REQUEST"]["API_KEY"]).to eq(api_key)
     end
@@ -18,16 +18,28 @@ describe Skycore::PayloadBuilder do
     end
 
     it "builds simple text" do
-      payload = builder.build_save_mms("Hello", "Hello", [])
+      payload = builder.build_save_mms("", "Hello", "Fallback SMS", [])
       parsed = Crack::XML.parse(payload)
       slide = parsed["REQUEST"]["SLIDE"]
+      subject = parsed["REQUEST"]["SUBJECT"]
       expect(slide.keys.size).to eq(1)
+      expect(subject).to eq(nil)
+      expect(slide["TEXT"]).to eq("Hello")
+    end
+
+    it "builds subject and text" do
+      payload = builder.build_save_mms("Hi", "Hello", "Fallback SMS", [])
+      parsed = Crack::XML.parse(payload)
+      slide = parsed["REQUEST"]["SLIDE"]
+      subject = parsed["REQUEST"]["SUBJECT"]
+      expect(slide.keys.size).to eq(1)
+      expect(subject).to eq("Hi")
       expect(slide["TEXT"]).to eq("Hello")
     end
 
     it "builds text + image" do
       image_url = "http://app.tatango.com/tatango_logo.png"
-      payload = builder.build_save_mms("Hello", "Hello", [
+      payload = builder.build_save_mms("", "Hello", "Fallback SMS", [
         {
           type: "IMAGE",
           url: image_url
@@ -39,6 +51,74 @@ describe Skycore::PayloadBuilder do
       expect(slide["TEXT"]).to eq("Hello")
       expect(slide["IMAGE"]["URL"]).to eq(image_url)
     end
+  end
+
+  context '#build_save_mms_v2' do
+    # Accepts (subject, fallbacktext, slide) as argument
+    # `slide` looks for the `type`, `content`, `kind`, and/or `url` parameters
+    #  `type` should be `text` or `attachment` and `kind` should be `image`
+    image_url = "http://app.tatango.com/tatango_logo.png"
+
+    it "has correct api_key" do
+      payload = builder.build_save_mms_v2("", "Hello", [])
+      parsed = Crack::XML.parse(payload)
+      expect(parsed["REQUEST"]["API_KEY"]).to eq(api_key)
+    end
+
+    it "builds two slides" do
+      payload = builder.build_save_mms_v2("", "Fallback SMS", [
+        {
+          type: "attachment",
+          kind: "IMAGE",
+          url: image_url
+        },
+        {
+          type: "text",
+          content: "Hello"
+        }
+      ])
+      parsed = Crack::XML.parse(payload)
+      slides = parsed["REQUEST"]["SLIDE"]
+      expect(slides.size).to eq(2)
+    end
+
+    it "builds the image slide before the text slide" do
+
+      payload = builder.build_save_mms_v2("", "Fallback SMS", [
+        {
+          type: "attachment",
+          kind: "IMAGE",
+          url: image_url
+        },
+        {
+          type: "text",
+          content: "Hello"
+        }
+      ])
+      parsed = Crack::XML.parse(payload)
+      slides = parsed["REQUEST"]["SLIDE"]
+      expect(slides[0]["IMAGE"]["URL"]).to eq(image_url)
+      expect(slides[1]["TEXT"]).to eq("Hello")
+    end
+
+    it "builds the image slide after the text slide" do
+      payload = builder.build_save_mms_v2("", "Fallback SMS", [
+        {
+          type: "text",
+          content: "Hello"
+        },
+        {
+          type: "attachment",
+          kind: "IMAGE",
+          url: image_url
+        }
+      ])
+      parsed = Crack::XML.parse(payload)
+      slides = parsed["REQUEST"]["SLIDE"]
+      expect(slides[1]["IMAGE"]["URL"]).to eq(image_url)
+      expect(slides[0]["TEXT"]).to eq("Hello")
+    end
+
   end
 
   context "#build_send_saved_mms" do
