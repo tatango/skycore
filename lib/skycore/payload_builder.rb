@@ -48,6 +48,23 @@ class Skycore
       }
     end
 
+    # Builds text on image on separate slides as follows:
+    #
+    # <REQUEST>
+    #   <ACTION>saveMMS</ACTION>
+    #   <API_KEY>my_key</API_KEY> <!-- api_key -->
+    #   <NAME>tatango_test</NAME>
+    #   <FALLBACKSMSTEXT>Hello</FALLBACKSMSTEXT> <!-- fallback_text -->
+    #   <!-- / for each slide -->
+    #   <SLIDE>
+    #     <TEXT>Hello</TEXT> <!-- text -->
+    #   </SLIDE>
+    #   <SLIDE>
+    #     <IMAGE>
+    #     </IMAGE>
+    #       <URL>http://app.tatango.com/tatango_logo.png</URL>
+    #   </SLIDE>
+    # </REQUEST>
     def build_save_mms_v2(subject, fallback_text, slides)
       api_key = @api_key
 
@@ -61,11 +78,11 @@ class Skycore
         x.SUBJECT subject if subject
         slides.each do |slide|
           x.SLIDE {
-            if slide['type'] == 'text'
-              x.TEXT slide['content']
-            elsif slide['type'] == 'attachment' && !slide['url'].to_s.empty?
-              x.tag!(slide['kind'].upcase) do
-                x.URL slide['url']
+            if slide[:type] == 'text'
+              x.TEXT slide[:content]
+            elsif slide[:type] == 'attachment' && !slide[:url].to_s.empty?
+              x.tag!(slide[:kind].upcase) do
+                x.URL slide[:url]
               end
             end
           }
@@ -117,11 +134,16 @@ class Skycore
         x.FROM from
         x.CUSTOMSUBJECT(subject) if subject
         slides.each_with_index do |slide, ix|
-          if slide['type'] == 'text'
+          if slide[:type] == 'text'
             x.CUSTOMTEXT {
-              x.VALUE slide['content']
+              x.VALUE slide[:content]
               x.SLIDE ix + 1
             }
+          elsif slide[:type] == 'attachment'
+            x.tag!(slide[:kind].upcase) do
+              x.URL slide[:url]
+              x.SLIDE ix + 1
+            end
           end
         end
       }
